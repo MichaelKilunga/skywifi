@@ -697,6 +697,7 @@
                         toast('Payment timeout. Please try again.');
                         $payBtn.prop('disabled', false).text('Pay & Connect').removeClass('btn-error');
                         polling = false;
+                        interactionDisabled = false;
                         return;
                     }
                     attempts++;
