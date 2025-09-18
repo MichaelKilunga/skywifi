@@ -30,7 +30,7 @@ class SubscriptionController extends Controller
     public function checkAuth(Request $request)
     {
         $mac = $request->mac;
-        $client = UserDevice::where('mac_address', $mac)->first();
+        $client = UserDevice::where('mac_address', $mac)->first();        
         
         if (!$client) {
             return response()->json(['status' => 'deny', 'time' => 0]);
@@ -39,10 +39,45 @@ class SubscriptionController extends Controller
         $activeSubscription = $client->subscriptions()->where('status', 'active')->first();
 
         if ($activeSubscription) {
-            return response()->json(['status' => 'allow', 'time' => $activeSubscription->remaining_seconds]);
+            return response()->json(['status' => 'allow', 'time' => $activeSubscription->remainingTime()]);
         }
 
         return response()->json(['status' => 'deny', 'time' => 0]);
+    }
+
+    public function handleUserMacAction(Request $request, $username, $mac)
+    {
+        $action = $request->query('action');
+
+        if ($action === 'authorize' || $action === 'authenticate') {
+            return $this->checkAuth($request);
+        }
+
+        return response()->json(['error' => 'Invalid action'], 400);
+    }
+
+    public function handleUserSessionAction(Request $request, $username, $session_id)
+    {
+        $action = $request->query('action');
+
+        if ($action === 'preacct' || $action === 'accounting') {
+            // Handle pre-accounting or accounting logic here
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['error' => 'Invalid action'], 400);
+    }
+
+    public function handleUserMacPostAuthAction(Request $request, $username, $mac)
+    {
+        $action = $request->query('action');
+
+        if ($action === 'post-auth') {
+            // Handle post-auth logic here
+            return response()->json(['status' => 'success']);
+        }
+
+        return response()->json(['error' => 'Invalid action'], 400);
     }
 
 }

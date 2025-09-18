@@ -25,4 +25,16 @@ class Subscription extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    public function remainingTime()
+    {
+        if ($this->status !== 'active' || !$this->end_time) {
+            return 0;
+        }
+
+        $now = now();
+        $end = \Carbon\Carbon::parse($this->end_time);
+
+        return max(0, $end->diffInSeconds($now, false));
+    }
 }
