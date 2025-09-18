@@ -1,6 +1,5 @@
 *.log
 .DS_Store
-#prevent .htaccess from being uploaded to public repos
 /.htaccess
 .env
 .env.backup
